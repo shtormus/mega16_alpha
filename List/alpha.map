@@ -17,10 +17,13 @@ _btnCounter                                                       0x039E       2
 _tempCounter                                                      0x03A0       2
 _arrsize                                                          0x03A2       2
 _speed                                                            0x03A4       2
-_speedTimerOverflow                                               0x03A6       2
-_pulsesOldValue                                                   0x03A8       2
-i                                                                 0x03AA       2
-pulsesCounter                                                     0x03AC       2
+_tacho                                                            0x03A6       2
+_speedTimerOverflow                                               0x03A8       2
+_tachoTimerOverflow                                               0x03AA       2
+_speedoPulsesOldValue                                             0x03AC       2
+_tachoPulsesOldValue                                              0x03AE       2
+i                                                                 0x03B0       2
+pulsesCounter                                                     0x03B2       2
 
 EEPROM Allocation
 Variable                                                          Address   Size

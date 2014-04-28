@@ -2142,9 +2142,11 @@
 ;unsigned int _btnCounter, _tempCounter;;
 ;unsigned int _arrsize = sizeof(_arrTemplate)/sizeof(_arrTemplate[0]);
 ;unsigned int _speed;
+;unsigned int _tacho;
 ;unsigned int _speedTimerOverflow;
 ;unsigned int _tachoTimerOverflow;
-;unsigned int _pulsesOldValue;
+;unsigned int _speedoPulsesOldValue;
+;unsigned int _tachoPulsesOldValue;
 ;
 ;
 ;//ASCII
@@ -2961,78 +2963,57 @@
 ;PCODE: $00000744 VOL: 0
 ;PCODE: $00000745 VOL: 0
 ;PCODE: $00000746 VOL: 0
-;    }
+;            break;
 ;PCODE: $00000747 VOL: 0
-;}
+;        case 4:
 ;PCODE: $00000748 VOL: 0
 ;PCODE: $00000749 VOL: 0
 ;PCODE: $0000074A VOL: 0
+;            sprintf (lcd_buf, "%i.%i", _tacho/1000, (_tacho%1000)/100);
 ;PCODE: $0000074B VOL: 0
-;
-;void setTemplate(unsigned int numTemplate)
-;{
 ;PCODE: $0000074C VOL: 0
 ;PCODE: $0000074D VOL: 0
-;    _template = numTemplate;
 ;PCODE: $0000074E VOL: 0
-;	numTemplate -> Y+0
 ;PCODE: $0000074F VOL: 0
 ;PCODE: $00000750 VOL: 0
-;    LcdClear();
 ;PCODE: $00000751 VOL: 0
-;    LcdImage(pic1);
 ;PCODE: $00000752 VOL: 0
 ;PCODE: $00000753 VOL: 0
-;    //template(numTemplate);
-;}
 ;PCODE: $00000754 VOL: 0
 ;PCODE: $00000755 VOL: 0
 ;PCODE: $00000756 VOL: 0
-;
-;void warning(void)
-;{
 ;PCODE: $00000757 VOL: 0
 ;PCODE: $00000758 VOL: 0
-;  iconClear();
 ;PCODE: $00000759 VOL: 0
-;  if (_engineTemperature >= EngineTemperatureWarning)
 ;PCODE: $0000075A VOL: 0
 ;PCODE: $0000075B VOL: 0
 ;PCODE: $0000075C VOL: 0
-;  {
-;    LcdGotoXYFont(3,1);
 ;PCODE: $0000075D VOL: 0
 ;PCODE: $0000075E VOL: 0
 ;PCODE: $0000075F VOL: 0
 ;PCODE: $00000760 VOL: 0
-;    iconView(1,0);
+;            LcdStringBold(5,3);
 ;PCODE: $00000761 VOL: 0
 ;PCODE: $00000762 VOL: 0
 ;PCODE: $00000763 VOL: 0
 ;PCODE: $00000764 VOL: 0
+;            sprintf (lcd_buf, "rpm/m");
 ;PCODE: $00000765 VOL: 0
-;  }
-;
-;  if (_outTemperature <= OutTemperatureWarning)
 ;PCODE: $00000766 VOL: 0
 ;PCODE: $00000767 VOL: 0
 ;PCODE: $00000768 VOL: 0
 ;PCODE: $00000769 VOL: 0
-;  {
-;    LcdGotoXYFont(9,1);
 ;PCODE: $0000076A VOL: 0
 ;PCODE: $0000076B VOL: 0
 ;PCODE: $0000076C VOL: 0
 ;PCODE: $0000076D VOL: 0
-;    iconView(3,0);
+;            LcdString(5,5);
 ;PCODE: $0000076E VOL: 0
 ;PCODE: $0000076F VOL: 0
 ;PCODE: $00000770 VOL: 0
 ;PCODE: $00000771 VOL: 0
+;            sprintf (lcd_buf, "Tacho");
 ;PCODE: $00000772 VOL: 0
-;  }
-;
-;  if (_volt <= MinBatteryCurrent || _volt >= MaxBatteryCurrent)
 ;PCODE: $00000773 VOL: 0
 ;PCODE: $00000774 VOL: 0
 ;PCODE: $00000775 VOL: 0
@@ -3041,240 +3022,386 @@
 ;PCODE: $00000778 VOL: 0
 ;PCODE: $00000779 VOL: 0
 ;PCODE: $0000077A VOL: 0
+;	        LcdString(5,6);
 ;PCODE: $0000077B VOL: 0
 ;PCODE: $0000077C VOL: 0
 ;PCODE: $0000077D VOL: 0
-;  {
-;    LcdGotoXYFont(6,1);
 ;PCODE: $0000077E VOL: 0
+;            break;
 ;PCODE: $0000077F VOL: 0
+;    }
 ;PCODE: $00000780 VOL: 0
+;}
 ;PCODE: $00000781 VOL: 0
-;    iconView(2,0);
 ;PCODE: $00000782 VOL: 0
 ;PCODE: $00000783 VOL: 0
 ;PCODE: $00000784 VOL: 0
+;
+;void setTemplate(unsigned int numTemplate)
+;{
 ;PCODE: $00000785 VOL: 0
 ;PCODE: $00000786 VOL: 0
-;  }
-;
-;
-;}
+;    _template = numTemplate;
 ;PCODE: $00000787 VOL: 0
+;	numTemplate -> Y+0
 ;PCODE: $00000788 VOL: 0
 ;PCODE: $00000789 VOL: 0
-;
-;void update(void)
-;{
+;    LcdClear();
 ;PCODE: $0000078A VOL: 0
+;    LcdImage(pic1);
 ;PCODE: $0000078B VOL: 0
-;    baseTemplate(43,_engineTemperature);
 ;PCODE: $0000078C VOL: 0
+;    //template(numTemplate);
+;}
 ;PCODE: $0000078D VOL: 0
 ;PCODE: $0000078E VOL: 0
 ;PCODE: $0000078F VOL: 0
-;    template(_template);
+;
+;void warning(void)
+;{
 ;PCODE: $00000790 VOL: 0
 ;PCODE: $00000791 VOL: 0
-;    warning();
+;  iconClear();
 ;PCODE: $00000792 VOL: 0
-;    LcdUpdate();
+;  if (_engineTemperature >= EngineTemperatureWarning)
 ;PCODE: $00000793 VOL: 0
-;}
 ;PCODE: $00000794 VOL: 0
 ;PCODE: $00000795 VOL: 0
-;
-;void nextTemplate(void)
-;{
+;  {
+;    LcdGotoXYFont(3,1);
 ;PCODE: $00000796 VOL: 0
 ;PCODE: $00000797 VOL: 0
-;    setTemplate(_arrTemplate[_tempCounter]);
 ;PCODE: $00000798 VOL: 0
 ;PCODE: $00000799 VOL: 0
+;    iconView(1,0);
 ;PCODE: $0000079A VOL: 0
 ;PCODE: $0000079B VOL: 0
 ;PCODE: $0000079C VOL: 0
 ;PCODE: $0000079D VOL: 0
 ;PCODE: $0000079E VOL: 0
-;    _tempCounter++;
+;  }
+;
+;  if (_outTemperature <= OutTemperatureWarning)
 ;PCODE: $0000079F VOL: 0
 ;PCODE: $000007A0 VOL: 0
 ;PCODE: $000007A1 VOL: 0
 ;PCODE: $000007A2 VOL: 0
-;    if (_tempCounter > _arrsize-1) _tempCounter = 0;
+;  {
+;    LcdGotoXYFont(9,1);
 ;PCODE: $000007A3 VOL: 0
 ;PCODE: $000007A4 VOL: 0
 ;PCODE: $000007A5 VOL: 0
 ;PCODE: $000007A6 VOL: 0
+;    iconView(3,0);
 ;PCODE: $000007A7 VOL: 0
 ;PCODE: $000007A8 VOL: 0
 ;PCODE: $000007A9 VOL: 0
-;}
 ;PCODE: $000007AA VOL: 0
 ;PCODE: $000007AB VOL: 0
-;PCODE: $000007AC VOL: 0
+;  }
 ;
-;void speedo(unsigned int timerState)
-;{
+;  if (_volt <= MinBatteryCurrent || _volt >= MaxBatteryCurrent)
+;PCODE: $000007AC VOL: 0
 ;PCODE: $000007AD VOL: 0
 ;PCODE: $000007AE VOL: 0
-;unsigned int pulses, timerValue;
-;unsigned int tH_buff, tL_buff;
-;
-;    if (timerState && _speed > 0)
 ;PCODE: $000007AF VOL: 0
 ;PCODE: $000007B0 VOL: 0
 ;PCODE: $000007B1 VOL: 0
-;	timerState -> Y+8
-;	pulses -> R16,R17
-;	timerValue -> R18,R19
-;	tH_buff -> R20,R21
-;	tL_buff -> Y+6
 ;PCODE: $000007B2 VOL: 0
 ;PCODE: $000007B3 VOL: 0
 ;PCODE: $000007B4 VOL: 0
 ;PCODE: $000007B5 VOL: 0
 ;PCODE: $000007B6 VOL: 0
+;  {
+;    LcdGotoXYFont(6,1);
 ;PCODE: $000007B7 VOL: 0
 ;PCODE: $000007B8 VOL: 0
 ;PCODE: $000007B9 VOL: 0
 ;PCODE: $000007BA VOL: 0
+;    iconView(2,0);
 ;PCODE: $000007BB VOL: 0
-;    {
-;        _speedTimerOverflow++;
 ;PCODE: $000007BC VOL: 0
 ;PCODE: $000007BD VOL: 0
 ;PCODE: $000007BE VOL: 0
 ;PCODE: $000007BF VOL: 0
-;        return;
+;  }
+;
+;
+;}
 ;PCODE: $000007C0 VOL: 0
 ;PCODE: $000007C1 VOL: 0
 ;PCODE: $000007C2 VOL: 0
-;    }
-;    #asm("cli")
+;
+;void update(void)
+;{
 ;PCODE: $000007C3 VOL: 0
 ;PCODE: $000007C4 VOL: 0
-	cli
+;    baseTemplate(43,_engineTemperature);
 ;PCODE: $000007C5 VOL: 0
-;    tL_buff=TCNT1L;
 ;PCODE: $000007C6 VOL: 0
 ;PCODE: $000007C7 VOL: 0
 ;PCODE: $000007C8 VOL: 0
-;    tH_buff=TCNT1H;
+;    template(_template);
 ;PCODE: $000007C9 VOL: 0
 ;PCODE: $000007CA VOL: 0
+;    warning();
 ;PCODE: $000007CB VOL: 0
-;    #asm("sei")
+;    LcdUpdate();
 ;PCODE: $000007CC VOL: 0
-	sei
+;}
 ;PCODE: $000007CD VOL: 0
-;    timerValue = (tH_buff*256)+tL_buff;
 ;PCODE: $000007CE VOL: 0
+;
+;void nextTemplate(void)
+;{
 ;PCODE: $000007CF VOL: 0
 ;PCODE: $000007D0 VOL: 0
+;    setTemplate(_arrTemplate[_tempCounter]);
 ;PCODE: $000007D1 VOL: 0
 ;PCODE: $000007D2 VOL: 0
-;
-;    if (_speedTimerOverflow)
 ;PCODE: $000007D3 VOL: 0
 ;PCODE: $000007D4 VOL: 0
 ;PCODE: $000007D5 VOL: 0
-;    {
-;        pulses = (65536*_speedTimerOverflow - _pulsesOldValue) + timerValue;
 ;PCODE: $000007D6 VOL: 0
 ;PCODE: $000007D7 VOL: 0
+;    _tempCounter++;
 ;PCODE: $000007D8 VOL: 0
 ;PCODE: $000007D9 VOL: 0
 ;PCODE: $000007DA VOL: 0
 ;PCODE: $000007DB VOL: 0
-;        _speedTimerOverflow = 0;
+;    if (_tempCounter > _arrsize-1) _tempCounter = 0;
 ;PCODE: $000007DC VOL: 0
 ;PCODE: $000007DD VOL: 0
-;    }else{
 ;PCODE: $000007DE VOL: 0
 ;PCODE: $000007DF VOL: 0
-;        pulses = timerValue - _pulsesOldValue;
 ;PCODE: $000007E0 VOL: 0
 ;PCODE: $000007E1 VOL: 0
 ;PCODE: $000007E2 VOL: 0
+;}
 ;PCODE: $000007E3 VOL: 0
-;    }
 ;PCODE: $000007E4 VOL: 0
-;    _pulsesOldValue = timerValue;
 ;PCODE: $000007E5 VOL: 0
+;
+;unsigned int getPulses (unsigned int *overflow, unsigned int *oldValue)
+;{
 ;PCODE: $000007E6 VOL: 0
-;    //_speed=125000/pulses;
-;    _speed = (((125000/pulses)/PulsesAmount)*36)/10;
 ;PCODE: $000007E7 VOL: 0
+;    unsigned int pulses, timerValue;
+;    unsigned int tH_buff, tL_buff;
+;
+;
+;
+;    #asm("cli")
 ;PCODE: $000007E8 VOL: 0
 ;PCODE: $000007E9 VOL: 0
 ;PCODE: $000007EA VOL: 0
+;	*overflow -> Y+10
+;	*oldValue -> Y+8
+;	pulses -> R16,R17
+;	timerValue -> R18,R19
+;	tH_buff -> R20,R21
+;	tL_buff -> Y+6
 ;PCODE: $000007EB VOL: 0
+	cli
 ;PCODE: $000007EC VOL: 0
+;    tL_buff=TCNT1L;
 ;PCODE: $000007ED VOL: 0
 ;PCODE: $000007EE VOL: 0
 ;PCODE: $000007EF VOL: 0
+;    tH_buff=TCNT1H;
 ;PCODE: $000007F0 VOL: 0
-;    if (_speedTimerOverflow > 2)  _speed=0;
 ;PCODE: $000007F1 VOL: 0
 ;PCODE: $000007F2 VOL: 0
+;    #asm("sei")
 ;PCODE: $000007F3 VOL: 0
+	sei
 ;PCODE: $000007F4 VOL: 0
+;    timerValue = (tH_buff*256)+tL_buff;
 ;PCODE: $000007F5 VOL: 0
-;
-;}
 ;PCODE: $000007F6 VOL: 0
 ;PCODE: $000007F7 VOL: 0
 ;PCODE: $000007F8 VOL: 0
 ;PCODE: $000007F9 VOL: 0
-;PCODE: $000007FA VOL: 0
 ;
-;void tacho ()
-;{
+;    if (overflow)
+;PCODE: $000007FA VOL: 0
 ;PCODE: $000007FB VOL: 0
 ;PCODE: $000007FC VOL: 0
-;
-;}
+;    {
+;        pulses = (65535*(*overflow) - (*oldValue)) + timerValue;
 ;PCODE: $000007FD VOL: 0
 ;PCODE: $000007FE VOL: 0
-;
-;void buttonCtrl (void)
-;{
 ;PCODE: $000007FF VOL: 0
 ;PCODE: $00000800 VOL: 0
-;    if (BtnPort == 0)
 ;PCODE: $00000801 VOL: 0
 ;PCODE: $00000802 VOL: 0
 ;PCODE: $00000803 VOL: 0
-;    {
-;        delay_ms(20);
 ;PCODE: $00000804 VOL: 0
 ;PCODE: $00000805 VOL: 0
 ;PCODE: $00000806 VOL: 0
-;        _btnCounter++;
 ;PCODE: $00000807 VOL: 0
 ;PCODE: $00000808 VOL: 0
+;        *overflow = 0;
 ;PCODE: $00000809 VOL: 0
 ;PCODE: $0000080A VOL: 0
-;    }else{
 ;PCODE: $0000080B VOL: 0
+;    }else{
 ;PCODE: $0000080C VOL: 0
-;        if(_btnCounter>0){
 ;PCODE: $0000080D VOL: 0
+;        pulses = timerValue - (*oldValue);
 ;PCODE: $0000080E VOL: 0
 ;PCODE: $0000080F VOL: 0
-;            nextTemplate();
 ;PCODE: $00000810 VOL: 0
-;            _btnCounter = 0;
 ;PCODE: $00000811 VOL: 0
 ;PCODE: $00000812 VOL: 0
-;        }
-;    }
 ;PCODE: $00000813 VOL: 0
+;    }
 ;PCODE: $00000814 VOL: 0
-;}
+;    *oldValue = timerValue;
 ;PCODE: $00000815 VOL: 0
 ;PCODE: $00000816 VOL: 0
+;    return pulses;
+;PCODE: $00000817 VOL: 0
+;PCODE: $00000818 VOL: 0
+;PCODE: $00000819 VOL: 0
+;PCODE: $0000081A VOL: 0
+;}
+;PCODE: $0000081B VOL: 0
+;
+;void speedo(unsigned int timerState)
+;{
+;PCODE: $0000081C VOL: 0
+;PCODE: $0000081D VOL: 0
+;
+;    if (timerState && _speed > 0)
+;PCODE: $0000081E VOL: 0
+;	timerState -> Y+0
+;PCODE: $0000081F VOL: 0
+;PCODE: $00000820 VOL: 0
+;PCODE: $00000821 VOL: 0
+;PCODE: $00000822 VOL: 0
+;PCODE: $00000823 VOL: 0
+;PCODE: $00000824 VOL: 0
+;PCODE: $00000825 VOL: 0
+;PCODE: $00000826 VOL: 0
+;PCODE: $00000827 VOL: 0
+;PCODE: $00000828 VOL: 0
+;    {
+;        _speedTimerOverflow++;
+;PCODE: $00000829 VOL: 0
+;PCODE: $0000082A VOL: 0
+;PCODE: $0000082B VOL: 0
+;PCODE: $0000082C VOL: 0
+;        return;
+;PCODE: $0000082D VOL: 0
+;PCODE: $0000082E VOL: 0
+;    }
+;
+;    _speed = (((125000/getPulses(&_speedTimerOverflow, &_speedoPulsesOldValue))/PulsesAmount)*36)/10;
+;PCODE: $0000082F VOL: 0
+;PCODE: $00000830 VOL: 0
+;PCODE: $00000831 VOL: 0
+;PCODE: $00000832 VOL: 0
+;PCODE: $00000833 VOL: 0
+;PCODE: $00000834 VOL: 0
+;PCODE: $00000835 VOL: 0
+;PCODE: $00000836 VOL: 0
+;PCODE: $00000837 VOL: 0
+;PCODE: $00000838 VOL: 0
+;PCODE: $00000839 VOL: 0
+;PCODE: $0000083A VOL: 0
+;PCODE: $0000083B VOL: 0
+;PCODE: $0000083C VOL: 0
+;}
+;PCODE: $0000083D VOL: 0
+;PCODE: $0000083E VOL: 0
+;PCODE: $0000083F VOL: 0
+;
+;void tacho (unsigned int timerState)
+;{
+;PCODE: $00000840 VOL: 0
+;PCODE: $00000841 VOL: 0
+;    if (timerState && _tacho > 0)
+;PCODE: $00000842 VOL: 0
+;	timerState -> Y+0
+;PCODE: $00000843 VOL: 0
+;PCODE: $00000844 VOL: 0
+;PCODE: $00000845 VOL: 0
+;PCODE: $00000846 VOL: 0
+;PCODE: $00000847 VOL: 0
+;PCODE: $00000848 VOL: 0
+;PCODE: $00000849 VOL: 0
+;PCODE: $0000084A VOL: 0
+;PCODE: $0000084B VOL: 0
+;PCODE: $0000084C VOL: 0
+;        {
+;            _tachoTimerOverflow++;
+;PCODE: $0000084D VOL: 0
+;PCODE: $0000084E VOL: 0
+;PCODE: $0000084F VOL: 0
+;PCODE: $00000850 VOL: 0
+;            return;
+;PCODE: $00000851 VOL: 0
+;PCODE: $00000852 VOL: 0
+;        }
+;
+;    _tacho = ((125000/getPulses(&_tachoTimerOverflow, &_tachoPulsesOldValue))*60)/4;
+;PCODE: $00000853 VOL: 0
+;PCODE: $00000854 VOL: 0
+;PCODE: $00000855 VOL: 0
+;PCODE: $00000856 VOL: 0
+;PCODE: $00000857 VOL: 0
+;PCODE: $00000858 VOL: 0
+;PCODE: $00000859 VOL: 0
+;PCODE: $0000085A VOL: 0
+;PCODE: $0000085B VOL: 0
+;PCODE: $0000085C VOL: 0
+;PCODE: $0000085D VOL: 0
+;PCODE: $0000085E VOL: 0
+;PCODE: $0000085F VOL: 0
+;PCODE: $00000860 VOL: 0
+;}
+;PCODE: $00000861 VOL: 0
+;PCODE: $00000862 VOL: 0
+;PCODE: $00000863 VOL: 0
+;
+;void buttonCtrl (void)
+;{
+;PCODE: $00000864 VOL: 0
+;PCODE: $00000865 VOL: 0
+;    if (BtnPort == 0)
+;PCODE: $00000866 VOL: 0
+;PCODE: $00000867 VOL: 0
+;PCODE: $00000868 VOL: 0
+;    {
+;        delay_ms(20);
+;PCODE: $00000869 VOL: 0
+;PCODE: $0000086A VOL: 0
+;PCODE: $0000086B VOL: 0
+;        _btnCounter++;
+;PCODE: $0000086C VOL: 0
+;PCODE: $0000086D VOL: 0
+;PCODE: $0000086E VOL: 0
+;PCODE: $0000086F VOL: 0
+;    }else{
+;PCODE: $00000870 VOL: 0
+;PCODE: $00000871 VOL: 0
+;        if(_btnCounter>0){
+;PCODE: $00000872 VOL: 0
+;PCODE: $00000873 VOL: 0
+;PCODE: $00000874 VOL: 0
+;            nextTemplate();
+;PCODE: $00000875 VOL: 0
+;            _btnCounter = 0;
+;PCODE: $00000876 VOL: 0
+;PCODE: $00000877 VOL: 0
+;        }
+;    }
+;PCODE: $00000878 VOL: 0
+;PCODE: $00000879 VOL: 0
+;}
+;PCODE: $0000087A VOL: 0
+;PCODE: $0000087B VOL: 0
 ;
 ;
 ;#define tempUpdateTime 5//в секундах
@@ -3289,393 +3416,399 @@
 ;// Read the AD conversion result
 ;unsigned int read_adc(unsigned char adc_input)
 ; 0000 0030 {
-;PCODE: $00000817 VOL: 0
-;PCODE: $00000818 VOL: 0
+;PCODE: $0000087C VOL: 0
+;PCODE: $0000087D VOL: 0
 ; 0000 0031 ADMUX=adc_input | (ADC_VREF_TYPE & 0xff);
-;PCODE: $00000819 VOL: 0
+;PCODE: $0000087E VOL: 0
 ;	adc_input -> Y+0
-;PCODE: $0000081A VOL: 0
-;PCODE: $0000081B VOL: 0
-;PCODE: $0000081C VOL: 0
+;PCODE: $0000087F VOL: 0
+;PCODE: $00000880 VOL: 0
+;PCODE: $00000881 VOL: 0
 ; 0000 0032 // Delay needed for the stabilization of the ADC input voltage
 ; 0000 0033 delay_us(10);
-;PCODE: $0000081D VOL: 0
+;PCODE: $00000882 VOL: 0
 ; 0000 0034 // Start the AD conversion
 ; 0000 0035 ADCSRA|=0x40;
-;PCODE: $0000081E VOL: 0
-;PCODE: $0000081F VOL: 0
+;PCODE: $00000883 VOL: 0
+;PCODE: $00000884 VOL: 0
 ; 0000 0036 // Wait for the AD conversion to complete
 ; 0000 0037 while ((ADCSRA & 0x10)==0);
-;PCODE: $00000820 VOL: 0
-;PCODE: $00000821 VOL: 0
-;PCODE: $00000822 VOL: 0
-;PCODE: $00000823 VOL: 0
-;PCODE: $00000824 VOL: 0
-;PCODE: $00000825 VOL: 0
+;PCODE: $00000885 VOL: 0
+;PCODE: $00000886 VOL: 0
+;PCODE: $00000887 VOL: 0
+;PCODE: $00000888 VOL: 0
+;PCODE: $00000889 VOL: 0
+;PCODE: $0000088A VOL: 0
 ; 0000 0038 ADCSRA|=0x10;
-;PCODE: $00000826 VOL: 0
-;PCODE: $00000827 VOL: 0
+;PCODE: $0000088B VOL: 0
+;PCODE: $0000088C VOL: 0
 ; 0000 0039 return ADCW;
-;PCODE: $00000828 VOL: 0
-;PCODE: $00000829 VOL: 0
-;PCODE: $0000082A VOL: 0
+;PCODE: $0000088D VOL: 0
+;PCODE: $0000088E VOL: 0
+;PCODE: $0000088F VOL: 0
 ; 0000 003A }
-;PCODE: $0000082B VOL: 0
+;PCODE: $00000890 VOL: 0
 ;
 ;// External Interrupt 0 service routine
 ;interrupt [EXT_INT0] void ext_int0_isr(void)
 ; 0000 003E {
-;PCODE: $0000082C VOL: 0
-;PCODE: $0000082D VOL: 0
+;PCODE: $00000891 VOL: 0
+;PCODE: $00000892 VOL: 0
 ; 0000 003F // Place your code here
 ; 0000 0040 speedo(timerNormal);
-;PCODE: $0000082E VOL: 0
-;PCODE: $0000082F VOL: 0
-;PCODE: $00000830 VOL: 0
+;PCODE: $00000893 VOL: 0
+;PCODE: $00000894 VOL: 0
+;PCODE: $00000895 VOL: 0
 ; 0000 0041 }
-;PCODE: $00000831 VOL: 0
-;PCODE: $00000832 VOL: 0
-;PCODE: $00000833 VOL: 0
+;PCODE: $00000896 VOL: 0
+;PCODE: $00000897 VOL: 0
+;PCODE: $00000898 VOL: 0
 ;
 ;// External Interrupt 1 service routine
 ;interrupt [EXT_INT1] void ext_int1_isr(void)
 ; 0000 0045 {
-;PCODE: $00000834 VOL: 0
-;PCODE: $00000835 VOL: 0
+;PCODE: $00000899 VOL: 0
+;PCODE: $0000089A VOL: 0
 ; 0000 0046 // Place your code here
-; 0000 0047 tacho();
-;PCODE: $00000836 VOL: 0
+; 0000 0047 tacho(timerNormal);
+;PCODE: $0000089B VOL: 0
+;PCODE: $0000089C VOL: 0
+;PCODE: $0000089D VOL: 0
 ; 0000 0048 }
-;PCODE: $00000837 VOL: 0
-;PCODE: $00000838 VOL: 0
-;PCODE: $00000839 VOL: 0
+;PCODE: $0000089E VOL: 0
+;PCODE: $0000089F VOL: 0
+;PCODE: $000008A0 VOL: 0
 ;
 ;// Timer 0 overflow interrupt service routine
 ;interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 ; 0000 004C {
-;PCODE: $0000083A VOL: 0
-;PCODE: $0000083B VOL: 0
+;PCODE: $000008A1 VOL: 0
+;PCODE: $000008A2 VOL: 0
 ; 0000 004D // Place your code here
 ; 0000 004E pulsesCounter++;
-;PCODE: $0000083C VOL: 0
-;PCODE: $0000083D VOL: 0
-;PCODE: $0000083E VOL: 0
-;PCODE: $0000083F VOL: 0
+;PCODE: $000008A3 VOL: 0
+;PCODE: $000008A4 VOL: 0
+;PCODE: $000008A5 VOL: 0
+;PCODE: $000008A6 VOL: 0
 ; 0000 004F if (pulsesCounter == 15) {
-;PCODE: $00000840 VOL: 0
-;PCODE: $00000841 VOL: 0
-;PCODE: $00000842 VOL: 0
+;PCODE: $000008A7 VOL: 0
+;PCODE: $000008A8 VOL: 0
+;PCODE: $000008A9 VOL: 0
 ; 0000 0050     pulsesCounter = 0;
-;PCODE: $00000843 VOL: 0
-;PCODE: $00000844 VOL: 0
+;PCODE: $000008AA VOL: 0
+;PCODE: $000008AB VOL: 0
 ; 0000 0051 
 ; 0000 0052     update();
-;PCODE: $00000845 VOL: 0
+;PCODE: $000008AC VOL: 0
 ; 0000 0053     i++;
-;PCODE: $00000846 VOL: 0
-;PCODE: $00000847 VOL: 0
-;PCODE: $00000848 VOL: 0
-;PCODE: $00000849 VOL: 0
+;PCODE: $000008AD VOL: 0
+;PCODE: $000008AE VOL: 0
+;PCODE: $000008AF VOL: 0
+;PCODE: $000008B0 VOL: 0
 ; 0000 0054 
 ; 0000 0055         if (i >= tempUpdateTime*2)
-;PCODE: $0000084A VOL: 0
-;PCODE: $0000084B VOL: 0
-;PCODE: $0000084C VOL: 0
+;PCODE: $000008B1 VOL: 0
+;PCODE: $000008B2 VOL: 0
+;PCODE: $000008B3 VOL: 0
 ; 0000 0056         {
 ; 0000 0057             i = 0;
-;PCODE: $0000084D VOL: 0
-;PCODE: $0000084E VOL: 0
+;PCODE: $000008B4 VOL: 0
+;PCODE: $000008B5 VOL: 0
 ; 0000 0058             getTemperature(ds18b20_devices);
-;PCODE: $0000084F VOL: 0
-;PCODE: $00000850 VOL: 0
-;PCODE: $00000851 VOL: 0
+;PCODE: $000008B6 VOL: 0
+;PCODE: $000008B7 VOL: 0
+;PCODE: $000008B8 VOL: 0
 ; 0000 0059             readADC(read_adc(0));
-;PCODE: $00000852 VOL: 0
-;PCODE: $00000853 VOL: 0
-;PCODE: $00000854 VOL: 0
-;PCODE: $00000855 VOL: 0
+;PCODE: $000008B9 VOL: 0
+;PCODE: $000008BA VOL: 0
+;PCODE: $000008BB VOL: 0
+;PCODE: $000008BC VOL: 0
 ; 0000 005A         }
 ; 0000 005B 
 ; 0000 005C }
-;PCODE: $00000856 VOL: 0
+;PCODE: $000008BD VOL: 0
 ; 0000 005D }
-;PCODE: $00000857 VOL: 0
-;PCODE: $00000858 VOL: 0
-;PCODE: $00000859 VOL: 0
-;PCODE: $0000085A VOL: 0
+;PCODE: $000008BE VOL: 0
+;PCODE: $000008BF VOL: 0
+;PCODE: $000008C0 VOL: 0
+;PCODE: $000008C1 VOL: 0
 ;
 ;// Timer1 output compare A interrupt service routine
 ;interrupt [TIM1_OVF] void timer1_ovf_isr(void)
 ; 0000 0061 {
-;PCODE: $0000085B VOL: 0
-;PCODE: $0000085C VOL: 0
+;PCODE: $000008C2 VOL: 0
+;PCODE: $000008C3 VOL: 0
 ; 0000 0062 // Place your code here
 ; 0000 0063 PORTC.1 = !PORTC.1;
-;PCODE: $0000085D VOL: 0
-;PCODE: $0000085E VOL: 0
-;PCODE: $0000085F VOL: 0
-;PCODE: $00000860 VOL: 0
-;PCODE: $00000861 VOL: 0
-;PCODE: $00000862 VOL: 0
-;PCODE: $00000863 VOL: 0
-;PCODE: $00000864 VOL: 0
-;PCODE: $00000865 VOL: 0
-;PCODE: $00000866 VOL: 0
-; 0000 0064 speedo(timerOverflow);
-;PCODE: $00000867 VOL: 0
-;PCODE: $00000868 VOL: 0
-;PCODE: $00000869 VOL: 0
-; 0000 0065 }
-;PCODE: $0000086A VOL: 0
-;PCODE: $0000086B VOL: 0
-;PCODE: $0000086C VOL: 0
-;
-;// Timer2 overflow interrupt service routine
-;interrupt [TIM2_OVF] void timer2_ovf_isr(void)
-; 0000 0069 {
-;PCODE: $0000086D VOL: 0
-;PCODE: $0000086E VOL: 0
-; 0000 006A // Place your code here
-; 0000 006B 
-; 0000 006C }
-;PCODE: $0000086F VOL: 0
-;PCODE: $00000870 VOL: 0
-;PCODE: $00000871 VOL: 0
-;
-;
-;void main(void)
-; 0000 0070 {
-;PCODE: $00000872 VOL: 0
-; 0000 0071 // Declare your local variables here
-; 0000 0072 
-; 0000 0073 // Input/Output Ports initialization
-; 0000 0074 // Port A initialization
-; 0000 0075 // Func7=In Func6=In Func5=In Func4=In Func3=In Func2=In Func1=In Func0=In
-; 0000 0076 // State7=T State6=T State5=T State4=T State3=T State2=T State1=T State0=T
-; 0000 0077 PORTA=0x00;
-;PCODE: $00000873 VOL: 0
-;PCODE: $00000874 VOL: 0
-; 0000 0078 DDRA=0x00;
-;PCODE: $00000875 VOL: 0
-;PCODE: $00000876 VOL: 0
-; 0000 0079 
-; 0000 007A // Port B initialization
-; 0000 007B // Func7=In Func6=Out Func5=In Func4=In Func3=In Func2=In Func1=In Func0=In
-; 0000 007C // State7=T State6=0 State5=T State4=T State3=T State2=T State1=T State0=T
-; 0000 007D PORTB=0x00;
-;PCODE: $00000877 VOL: 0
-;PCODE: $00000878 VOL: 0
-; 0000 007E DDRB=0x40;
-;PCODE: $00000879 VOL: 0
-;PCODE: $0000087A VOL: 0
-; 0000 007F 
-; 0000 0080 // Port C initialization
-; 0000 0081 // Func7=In Func6=In Func5=In Func4=In Func3=In Func2=In Func1=In Func0=In
-; 0000 0082 // State7=T State6=T State5=T State4=T State3=T State2=T State1=T State0=T
-; 0000 0083 PORTC=0x00;
-;PCODE: $0000087B VOL: 0
-;PCODE: $0000087C VOL: 0
-; 0000 0084 DDRC=0x02;
-;PCODE: $0000087D VOL: 0
-;PCODE: $0000087E VOL: 0
-; 0000 0085 
-; 0000 0086 // Port D initialization
-; 0000 0087 // Func7=In Func6=In Func5=In Func4=In Func3=In Func2=In Func1=In Func0=In
-; 0000 0088 // State7=T State6=T State5=T State4=T State3=T State2=T State1=T State0=T
-; 0000 0089 PORTD=0x00;
-;PCODE: $0000087F VOL: 0
-;PCODE: $00000880 VOL: 0
-; 0000 008A DDRD=0x00;
-;PCODE: $00000881 VOL: 0
-;PCODE: $00000882 VOL: 0
-; 0000 008B 
-; 0000 008C // Timer/Counter 0 initialization
-; 0000 008D // Clock source: System Clock
-; 0000 008E // Clock value: 7,813 kHz
-; 0000 008F // Mode: Normal top=0xFF
-; 0000 0090 // OC0 output: Disconnected
-; 0000 0091 TCCR0=0x05;
-;PCODE: $00000883 VOL: 0
-;PCODE: $00000884 VOL: 0
-; 0000 0092 TCNT0=0x00;
-;PCODE: $00000885 VOL: 0
-;PCODE: $00000886 VOL: 0
-; 0000 0093 OCR0=0x00;
-;PCODE: $00000887 VOL: 0
-;PCODE: $00000888 VOL: 0
-; 0000 0094 
-; 0000 0095 // Timer/Counter 1 initialization
-; 0000 0096 // Clock source: System Clock
-; 0000 0097 // Clock value: 7,813 kHz
-; 0000 0098 // Mode: Normal top=0xFFFF
-; 0000 0099 // OC1A output: Discon.
-; 0000 009A // OC1B output: Discon.
-; 0000 009B // Noise Canceler: Off
-; 0000 009C // Input Capture on Falling Edge
-; 0000 009D // Timer1 Overflow Interrupt: Off
-; 0000 009E // Input Capture Interrupt: Off
-; 0000 009F // Compare A Match Interrupt: On
-; 0000 00A0 // Compare B Match Interrupt: Off
-; 0000 00A1 TCCR1A=0x00;
-;PCODE: $00000889 VOL: 0
-;PCODE: $0000088A VOL: 0
-; 0000 00A2 TCCR1B=0x03;
-;PCODE: $0000088B VOL: 0
-;PCODE: $0000088C VOL: 0
-; 0000 00A3 TCNT1H=0x00;
-;PCODE: $0000088D VOL: 0
-;PCODE: $0000088E VOL: 0
-; 0000 00A4 TCNT1L=0x00;
-;PCODE: $0000088F VOL: 0
-;PCODE: $00000890 VOL: 0
-; 0000 00A5 ICR1H=0x00;
-;PCODE: $00000891 VOL: 0
-;PCODE: $00000892 VOL: 0
-; 0000 00A6 ICR1L=0x00;
-;PCODE: $00000893 VOL: 0
-;PCODE: $00000894 VOL: 0
-; 0000 00A7 OCR1AH=0x00;
-;PCODE: $00000895 VOL: 0
-;PCODE: $00000896 VOL: 0
-; 0000 00A8 OCR1AL=0x00;
-;PCODE: $00000897 VOL: 0
-;PCODE: $00000898 VOL: 0
-; 0000 00A9 OCR1BH=0x00;
-;PCODE: $00000899 VOL: 0
-;PCODE: $0000089A VOL: 0
-; 0000 00AA OCR1BL=0x00;
-;PCODE: $0000089B VOL: 0
-;PCODE: $0000089C VOL: 0
-; 0000 00AB 
-; 0000 00AC // Timer/Counter 2 initialization
-; 0000 00AD // Clock source: System Clock
-; 0000 00AE // Clock value: 125,000 kHz
-; 0000 00AF // Mode: Normal top=0xFF
-; 0000 00B0 // OC2 output: Disconnected
-; 0000 00B1 ASSR=0x00;
-;PCODE: $0000089D VOL: 0
-;PCODE: $0000089E VOL: 0
-; 0000 00B2 TCCR2=0x04;
-;PCODE: $0000089F VOL: 0
-;PCODE: $000008A0 VOL: 0
-; 0000 00B3 TCNT2=0x00;
-;PCODE: $000008A1 VOL: 0
-;PCODE: $000008A2 VOL: 0
-; 0000 00B4 OCR2=0x00;
-;PCODE: $000008A3 VOL: 0
-;PCODE: $000008A4 VOL: 0
-; 0000 00B5 
-; 0000 00B6 // External Interrupt(s) initialization
-; 0000 00B7 // INT0: On
-; 0000 00B8 // INT0 Mode: Falling Edge
-; 0000 00B9 // INT1: On
-; 0000 00BA // INT1 Mode: Rising Edge
-; 0000 00BB // INT2: Off
-; 0000 00BC GICR|=0xC0;
-;PCODE: $000008A5 VOL: 0
-;PCODE: $000008A6 VOL: 0
-;PCODE: $000008A7 VOL: 0
-; 0000 00BD MCUCR=0x0E;
-;PCODE: $000008A8 VOL: 0
-;PCODE: $000008A9 VOL: 0
-; 0000 00BE MCUCSR=0x00;
-;PCODE: $000008AA VOL: 0
-;PCODE: $000008AB VOL: 0
-; 0000 00BF GIFR=0xC0;
-;PCODE: $000008AC VOL: 0
-;PCODE: $000008AD VOL: 0
-; 0000 00C0 
-; 0000 00C1 // Timer(s)/Counter(s) Interrupt(s) initialization
-; 0000 00C2 TIMSK=0x45;
-;PCODE: $000008AE VOL: 0
-;PCODE: $000008AF VOL: 0
-; 0000 00C3 
-; 0000 00C4 // USART initialization
-; 0000 00C5 // USART disabled
-; 0000 00C6 UCSRB=0x00;
-;PCODE: $000008B0 VOL: 0
-;PCODE: $000008B1 VOL: 0
-; 0000 00C7 
-; 0000 00C8 // Analog Comparator initialization
-; 0000 00C9 // Analog Comparator: Off
-; 0000 00CA // Analog Comparator Input Capture by Timer/Counter 1: Off
-; 0000 00CB ACSR=0x80;
-;PCODE: $000008B2 VOL: 0
-;PCODE: $000008B3 VOL: 0
-; 0000 00CC SFIOR=0x00;
-;PCODE: $000008B4 VOL: 0
-;PCODE: $000008B5 VOL: 0
-; 0000 00CD 
-; 0000 00CE // ADC initialization
-; 0000 00CF // ADC Clock frequency: 1000,000 kHz
-; 0000 00D0 // ADC Voltage Reference: Int., cap. on AREF
-; 0000 00D1 // ADC Auto Trigger Source: ADC Stopped
-; 0000 00D2 ADMUX=ADC_VREF_TYPE & 0xff;
-;PCODE: $000008B6 VOL: 0
-;PCODE: $000008B7 VOL: 0
-; 0000 00D3 ADCSRA=0x83;
-;PCODE: $000008B8 VOL: 0
-;PCODE: $000008B9 VOL: 0
-; 0000 00D4 
-; 0000 00D5 // SPI initialization
-; 0000 00D6 // SPI disabled
-; 0000 00D7 SPCR=0x00;
-;PCODE: $000008BA VOL: 0
-;PCODE: $000008BB VOL: 0
-; 0000 00D8 
-; 0000 00D9 // TWI initialization
-; 0000 00DA // TWI disabled
-; 0000 00DB TWCR=0x00;
-;PCODE: $000008BC VOL: 0
-;PCODE: $000008BD VOL: 0
-; 0000 00DC 
-; 0000 00DD // 1 Wire Bus initialization
-; 0000 00DE // 1 Wire Data port: PORTC
-; 0000 00DF // 1 Wire Data bit: 0
-; 0000 00E0 // Note: 1 Wire port settings are specified in the
-; 0000 00E1 // Project|Configure|C Compiler|Libraries|1 Wire menu.
-; 0000 00E2 w1_init();
-;PCODE: $000008BE VOL: 0
-; 0000 00E3 //ds18b20_init();
-; 0000 00E4 
-; 0000 00E5 LcdInit();
-;PCODE: $000008BF VOL: 0
-; 0000 00E6 LcdContrast(35);
-;PCODE: $000008C0 VOL: 0
-;PCODE: $000008C1 VOL: 0
-; 0000 00E7 tempDeviceInit();
-;PCODE: $000008C2 VOL: 0
-; 0000 00E8 getTemperature(ds18b20_devices);
-;PCODE: $000008C3 VOL: 0
 ;PCODE: $000008C4 VOL: 0
 ;PCODE: $000008C5 VOL: 0
-; 0000 00E9 readADC(read_adc(0));
 ;PCODE: $000008C6 VOL: 0
 ;PCODE: $000008C7 VOL: 0
 ;PCODE: $000008C8 VOL: 0
 ;PCODE: $000008C9 VOL: 0
-; 0000 00EA 
-; 0000 00EB setTemplate(2);
 ;PCODE: $000008CA VOL: 0
 ;PCODE: $000008CB VOL: 0
 ;PCODE: $000008CC VOL: 0
-; 0000 00EC 
-; 0000 00ED // Global enable interrupts
-; 0000 00EE #asm("sei")
 ;PCODE: $000008CD VOL: 0
-	sei
+; 0000 0064 speedo(timerOverflow);
 ;PCODE: $000008CE VOL: 0
-; 0000 00EF 
-; 0000 00F0 while (1)
 ;PCODE: $000008CF VOL: 0
-; 0000 00F1       {
-; 0000 00F2       // Place your code here
-; 0000 00F3          buttonCtrl();
 ;PCODE: $000008D0 VOL: 0
-; 0000 00F4       }
+; 0000 0065 tacho(timerOverflow);
 ;PCODE: $000008D1 VOL: 0
 ;PCODE: $000008D2 VOL: 0
-; 0000 00F5 }
 ;PCODE: $000008D3 VOL: 0
+; 0000 0066 }
 ;PCODE: $000008D4 VOL: 0
 ;PCODE: $000008D5 VOL: 0
+;PCODE: $000008D6 VOL: 0
+;
+;// Timer2 overflow interrupt service routine
+;interrupt [TIM2_OVF] void timer2_ovf_isr(void)
+; 0000 006A {
+;PCODE: $000008D7 VOL: 0
+;PCODE: $000008D8 VOL: 0
+; 0000 006B // Place your code here
+; 0000 006C 
+; 0000 006D }
+;PCODE: $000008D9 VOL: 0
+;PCODE: $000008DA VOL: 0
+;PCODE: $000008DB VOL: 0
+;
+;
+;void main(void)
+; 0000 0071 {
+;PCODE: $000008DC VOL: 0
+; 0000 0072 // Declare your local variables here
+; 0000 0073 
+; 0000 0074 // Input/Output Ports initialization
+; 0000 0075 // Port A initialization
+; 0000 0076 // Func7=In Func6=In Func5=In Func4=In Func3=In Func2=In Func1=In Func0=In
+; 0000 0077 // State7=T State6=T State5=T State4=T State3=T State2=T State1=T State0=T
+; 0000 0078 PORTA=0x00;
+;PCODE: $000008DD VOL: 0
+;PCODE: $000008DE VOL: 0
+; 0000 0079 DDRA=0x00;
+;PCODE: $000008DF VOL: 0
+;PCODE: $000008E0 VOL: 0
+; 0000 007A 
+; 0000 007B // Port B initialization
+; 0000 007C // Func7=In Func6=Out Func5=In Func4=In Func3=In Func2=In Func1=In Func0=In
+; 0000 007D // State7=T State6=0 State5=T State4=T State3=T State2=T State1=T State0=T
+; 0000 007E PORTB=0x00;
+;PCODE: $000008E1 VOL: 0
+;PCODE: $000008E2 VOL: 0
+; 0000 007F DDRB=0x40;
+;PCODE: $000008E3 VOL: 0
+;PCODE: $000008E4 VOL: 0
+; 0000 0080 
+; 0000 0081 // Port C initialization
+; 0000 0082 // Func7=In Func6=In Func5=In Func4=In Func3=In Func2=In Func1=In Func0=In
+; 0000 0083 // State7=T State6=T State5=T State4=T State3=T State2=T State1=T State0=T
+; 0000 0084 PORTC=0x00;
+;PCODE: $000008E5 VOL: 0
+;PCODE: $000008E6 VOL: 0
+; 0000 0085 DDRC=0x02;
+;PCODE: $000008E7 VOL: 0
+;PCODE: $000008E8 VOL: 0
+; 0000 0086 
+; 0000 0087 // Port D initialization
+; 0000 0088 // Func7=In Func6=In Func5=In Func4=In Func3=In Func2=In Func1=In Func0=In
+; 0000 0089 // State7=T State6=T State5=T State4=T State3=T State2=T State1=T State0=T
+; 0000 008A PORTD=0x00;
+;PCODE: $000008E9 VOL: 0
+;PCODE: $000008EA VOL: 0
+; 0000 008B DDRD=0x00;
+;PCODE: $000008EB VOL: 0
+;PCODE: $000008EC VOL: 0
+; 0000 008C 
+; 0000 008D // Timer/Counter 0 initialization
+; 0000 008E // Clock source: System Clock
+; 0000 008F // Clock value: 7,813 kHz
+; 0000 0090 // Mode: Normal top=0xFF
+; 0000 0091 // OC0 output: Disconnected
+; 0000 0092 TCCR0=0x05;
+;PCODE: $000008ED VOL: 0
+;PCODE: $000008EE VOL: 0
+; 0000 0093 TCNT0=0x00;
+;PCODE: $000008EF VOL: 0
+;PCODE: $000008F0 VOL: 0
+; 0000 0094 OCR0=0x00;
+;PCODE: $000008F1 VOL: 0
+;PCODE: $000008F2 VOL: 0
+; 0000 0095 
+; 0000 0096 // Timer/Counter 1 initialization
+; 0000 0097 // Clock source: System Clock
+; 0000 0098 // Clock value: 7,813 kHz
+; 0000 0099 // Mode: Normal top=0xFFFF
+; 0000 009A // OC1A output: Discon.
+; 0000 009B // OC1B output: Discon.
+; 0000 009C // Noise Canceler: Off
+; 0000 009D // Input Capture on Falling Edge
+; 0000 009E // Timer1 Overflow Interrupt: Off
+; 0000 009F // Input Capture Interrupt: Off
+; 0000 00A0 // Compare A Match Interrupt: On
+; 0000 00A1 // Compare B Match Interrupt: Off
+; 0000 00A2 TCCR1A=0x00;
+;PCODE: $000008F3 VOL: 0
+;PCODE: $000008F4 VOL: 0
+; 0000 00A3 TCCR1B=0x03;
+;PCODE: $000008F5 VOL: 0
+;PCODE: $000008F6 VOL: 0
+; 0000 00A4 TCNT1H=0x00;
+;PCODE: $000008F7 VOL: 0
+;PCODE: $000008F8 VOL: 0
+; 0000 00A5 TCNT1L=0x00;
+;PCODE: $000008F9 VOL: 0
+;PCODE: $000008FA VOL: 0
+; 0000 00A6 ICR1H=0x00;
+;PCODE: $000008FB VOL: 0
+;PCODE: $000008FC VOL: 0
+; 0000 00A7 ICR1L=0x00;
+;PCODE: $000008FD VOL: 0
+;PCODE: $000008FE VOL: 0
+; 0000 00A8 OCR1AH=0x00;
+;PCODE: $000008FF VOL: 0
+;PCODE: $00000900 VOL: 0
+; 0000 00A9 OCR1AL=0x00;
+;PCODE: $00000901 VOL: 0
+;PCODE: $00000902 VOL: 0
+; 0000 00AA OCR1BH=0x00;
+;PCODE: $00000903 VOL: 0
+;PCODE: $00000904 VOL: 0
+; 0000 00AB OCR1BL=0x00;
+;PCODE: $00000905 VOL: 0
+;PCODE: $00000906 VOL: 0
+; 0000 00AC 
+; 0000 00AD // Timer/Counter 2 initialization
+; 0000 00AE // Clock source: System Clock
+; 0000 00AF // Clock value: 125,000 kHz
+; 0000 00B0 // Mode: Normal top=0xFF
+; 0000 00B1 // OC2 output: Disconnected
+; 0000 00B2 ASSR=0x00;
+;PCODE: $00000907 VOL: 0
+;PCODE: $00000908 VOL: 0
+; 0000 00B3 TCCR2=0x04;
+;PCODE: $00000909 VOL: 0
+;PCODE: $0000090A VOL: 0
+; 0000 00B4 TCNT2=0x00;
+;PCODE: $0000090B VOL: 0
+;PCODE: $0000090C VOL: 0
+; 0000 00B5 OCR2=0x00;
+;PCODE: $0000090D VOL: 0
+;PCODE: $0000090E VOL: 0
+; 0000 00B6 
+; 0000 00B7 // External Interrupt(s) initialization
+; 0000 00B8 // INT0: On
+; 0000 00B9 // INT0 Mode: Falling Edge
+; 0000 00BA // INT1: On
+; 0000 00BB // INT1 Mode: Rising Edge
+; 0000 00BC // INT2: Off
+; 0000 00BD GICR|=0xC0;
+;PCODE: $0000090F VOL: 0
+;PCODE: $00000910 VOL: 0
+;PCODE: $00000911 VOL: 0
+; 0000 00BE MCUCR=0x0E;
+;PCODE: $00000912 VOL: 0
+;PCODE: $00000913 VOL: 0
+; 0000 00BF MCUCSR=0x00;
+;PCODE: $00000914 VOL: 0
+;PCODE: $00000915 VOL: 0
+; 0000 00C0 GIFR=0xC0;
+;PCODE: $00000916 VOL: 0
+;PCODE: $00000917 VOL: 0
+; 0000 00C1 
+; 0000 00C2 // Timer(s)/Counter(s) Interrupt(s) initialization
+; 0000 00C3 TIMSK=0x45;
+;PCODE: $00000918 VOL: 0
+;PCODE: $00000919 VOL: 0
+; 0000 00C4 
+; 0000 00C5 // USART initialization
+; 0000 00C6 // USART disabled
+; 0000 00C7 UCSRB=0x00;
+;PCODE: $0000091A VOL: 0
+;PCODE: $0000091B VOL: 0
+; 0000 00C8 
+; 0000 00C9 // Analog Comparator initialization
+; 0000 00CA // Analog Comparator: Off
+; 0000 00CB // Analog Comparator Input Capture by Timer/Counter 1: Off
+; 0000 00CC ACSR=0x80;
+;PCODE: $0000091C VOL: 0
+;PCODE: $0000091D VOL: 0
+; 0000 00CD SFIOR=0x00;
+;PCODE: $0000091E VOL: 0
+;PCODE: $0000091F VOL: 0
+; 0000 00CE 
+; 0000 00CF // ADC initialization
+; 0000 00D0 // ADC Clock frequency: 1000,000 kHz
+; 0000 00D1 // ADC Voltage Reference: Int., cap. on AREF
+; 0000 00D2 // ADC Auto Trigger Source: ADC Stopped
+; 0000 00D3 ADMUX=ADC_VREF_TYPE & 0xff;
+;PCODE: $00000920 VOL: 0
+;PCODE: $00000921 VOL: 0
+; 0000 00D4 ADCSRA=0x83;
+;PCODE: $00000922 VOL: 0
+;PCODE: $00000923 VOL: 0
+; 0000 00D5 
+; 0000 00D6 // SPI initialization
+; 0000 00D7 // SPI disabled
+; 0000 00D8 SPCR=0x00;
+;PCODE: $00000924 VOL: 0
+;PCODE: $00000925 VOL: 0
+; 0000 00D9 
+; 0000 00DA // TWI initialization
+; 0000 00DB // TWI disabled
+; 0000 00DC TWCR=0x00;
+;PCODE: $00000926 VOL: 0
+;PCODE: $00000927 VOL: 0
+; 0000 00DD 
+; 0000 00DE // 1 Wire Bus initialization
+; 0000 00DF // 1 Wire Data port: PORTC
+; 0000 00E0 // 1 Wire Data bit: 0
+; 0000 00E1 // Note: 1 Wire port settings are specified in the
+; 0000 00E2 // Project|Configure|C Compiler|Libraries|1 Wire menu.
+; 0000 00E3 w1_init();
+;PCODE: $00000928 VOL: 0
+; 0000 00E4 //ds18b20_init();
+; 0000 00E5 
+; 0000 00E6 LcdInit();
+;PCODE: $00000929 VOL: 0
+; 0000 00E7 LcdContrast(35);
+;PCODE: $0000092A VOL: 0
+;PCODE: $0000092B VOL: 0
+; 0000 00E8 tempDeviceInit();
+;PCODE: $0000092C VOL: 0
+; 0000 00E9 getTemperature(ds18b20_devices);
+;PCODE: $0000092D VOL: 0
+;PCODE: $0000092E VOL: 0
+;PCODE: $0000092F VOL: 0
+; 0000 00EA readADC(read_adc(0));
+;PCODE: $00000930 VOL: 0
+;PCODE: $00000931 VOL: 0
+;PCODE: $00000932 VOL: 0
+;PCODE: $00000933 VOL: 0
+; 0000 00EB 
+; 0000 00EC setTemplate(4);
+;PCODE: $00000934 VOL: 0
+;PCODE: $00000935 VOL: 0
+;PCODE: $00000936 VOL: 0
+; 0000 00ED 
+; 0000 00EE // Global enable interrupts
+; 0000 00EF #asm("sei")
+;PCODE: $00000937 VOL: 0
+	sei
+;PCODE: $00000938 VOL: 0
+; 0000 00F0 
+; 0000 00F1 while (1)
+;PCODE: $00000939 VOL: 0
+; 0000 00F2       {
+; 0000 00F3       // Place your code here
+; 0000 00F4          buttonCtrl();
+;PCODE: $0000093A VOL: 0
+; 0000 00F5       }
+;PCODE: $0000093B VOL: 0
+;PCODE: $0000093C VOL: 0
+; 0000 00F6 }
+;PCODE: $0000093D VOL: 0
+;PCODE: $0000093E VOL: 0
+;PCODE: $0000093F VOL: 0

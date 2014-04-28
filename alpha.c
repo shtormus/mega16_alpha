@@ -68,7 +68,7 @@ speedo(timerNormal);
 interrupt [EXT_INT1] void ext_int1_isr(void)
 {
 // Place your code here
-tacho();
+tacho(timerNormal);
 }
 
 // Timer 0 overflow interrupt service routine
@@ -98,6 +98,7 @@ interrupt [TIM1_OVF] void timer1_ovf_isr(void)
 // Place your code here
 PORTC.1 = !PORTC.1;
 speedo(timerOverflow);
+tacho(timerOverflow);
 }
 
 // Timer2 overflow interrupt service routine
@@ -232,7 +233,7 @@ tempDeviceInit();
 getTemperature(ds18b20_devices);
 readADC(read_adc(0));
 
-setTemplate(2);
+setTemplate(4);
 
 // Global enable interrupts
 #asm("sei")

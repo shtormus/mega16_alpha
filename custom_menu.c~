@@ -34,9 +34,11 @@ float _volt;
 unsigned int _btnCounter, _tempCounter;;
 unsigned int _arrsize = sizeof(_arrTemplate)/sizeof(_arrTemplate[0]);
 unsigned int _speed;
+unsigned int _tacho;
 unsigned int _speedTimerOverflow;
 unsigned int _tachoTimerOverflow;
-unsigned int _pulsesOldValue;
+unsigned int _speedoPulsesOldValue;
+unsigned int _tachoPulsesOldValue;
 
 
 //ASCII
@@ -272,6 +274,15 @@ void template(unsigned int numTemplate)
             LcdString(3,5);
             sprintf (lcd_buf, "%i", 3 - ds18b20_devices);
             LcdString(8,6);
+            break;
+        case 4:
+            sprintf (lcd_buf, "%i.%i", _tacho/1000, (_tacho%1000)/100);
+            LcdStringBold(4,3);
+            sprintf (lcd_buf, "rpm/m");
+            LcdString(6,5);
+            sprintf (lcd_buf, "Tacho");
+	        LcdString(4,6);
+            break;
     } 
 }
 
@@ -322,39 +333,51 @@ void nextTemplate(void)
     if (_tempCounter > _arrsize-1) _tempCounter = 0; 
 }
 
-void speedo(unsigned int timerState)
+unsigned int getPulses (unsigned int *overflow, unsigned int *oldValue)
 {
-unsigned int pulses, timerValue;
-unsigned int tH_buff, tL_buff;
+    unsigned int pulses, timerValue;
+    unsigned int tH_buff, tL_buff;
+    
+    
 
-    if (timerState && _speed > 0)
-    {     
-        _speedTimerOverflow++;
-        return;
-    }
     #asm("cli")
     tL_buff=TCNT1L;
     tH_buff=TCNT1H;
     #asm("sei")
     timerValue = (tH_buff*256)+tL_buff;
     
-    if (_speedTimerOverflow)
+    if (overflow)
     {
-        pulses = (65536*_speedTimerOverflow - timerValue) + _pulsesOldValue;
-        _speedTimerOverflow = 0;
+        pulses = (65535*(*overflow) - (*oldValue)) + timerValue;
+        *overflow = 0;
     }else{
-        pulses = timerValue - _pulsesOldValue;
+        pulses = timerValue - (*oldValue);
     }
-    _pulsesOldValue = timerValue;
-    //_speed=125000/pulses; 
-    _speed = (((125000/pulses)/PulsesAmount)*36)/10;
-    if (_speedTimerOverflow > 2)  _speed=0;
-    
+    *oldValue = timerValue;
+    return pulses;
 }
 
-void tacho ()
+void speedo(unsigned int timerState)
 {
-    
+
+    if (timerState && _speed > 0)
+    {     
+        _speedTimerOverflow++;
+        return;
+    }
+
+    _speed = (((125000/getPulses(&_speedTimerOverflow, &_speedoPulsesOldValue))/PulsesAmount)*36)/10;
+}
+
+void tacho (unsigned int timerState)
+{
+    if (timerState && _tacho > 0)
+        {     
+            _tachoTimerOverflow++;
+            return;
+        }
+
+    _tacho = ((125000/getPulses(&_tachoTimerOverflow, &_tachoPulsesOldValue))*60)/4;
 }
 
 void buttonCtrl (void)

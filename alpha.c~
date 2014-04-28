@@ -232,7 +232,7 @@ tempDeviceInit();
 getTemperature(ds18b20_devices);
 readADC(read_adc(0));
 
-setTemplate(1);
+setTemplate(4);
 
 // Global enable interrupts
 #asm("sei")
