@@ -277,11 +277,11 @@ void template(unsigned int numTemplate)
             break;
         case 4:
             sprintf (lcd_buf, "%i.%i", _tacho/1000, (_tacho%1000)/100);
-            LcdStringBold(4,3);
+            LcdStringBold(5,3);
             sprintf (lcd_buf, "rpm/m");
-            LcdString(6,5);
+            LcdString(5,5);
             sprintf (lcd_buf, "Tacho");
-	        LcdString(4,6);
+	        LcdString(5,6);
             break;
     } 
 }

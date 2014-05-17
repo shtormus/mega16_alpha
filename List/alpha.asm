@@ -1376,9 +1376,10 @@ _0x7C:
 _0x7D:
 	.DB  0x2
 _0x7E:
-	.DB  0x0,0x0,0x1,0x0,0x2,0x0,0x3
-_0x7F:
+	.DB  0x0,0x0,0x1,0x0,0x2,0x0,0x3,0x0
 	.DB  0x4
+_0x7F:
+	.DB  0x5
 _0xBE:
 	.DB  0x3,0x3,0x2,0x50
 _0x0:
@@ -1409,7 +1410,7 @@ __GLOBAL_INI_TBL:
 	.DW  _internalTempDevice
 	.DW  _0x7D*2
 
-	.DW  0x07
+	.DW  0x09
 	.DW  __arrTemplate
 	.DW  _0x7E*2
 
@@ -3037,7 +3038,7 @@ _0x70:
 ;// 9 bytes are used for each device
 ;// (see the w1_search function description in the help)
 ;unsigned char ds18b20_rom_codes[MAX_DS18B20][9];
-;unsigned int _arrTemplate[] = {0,1,2,3};
+;unsigned int _arrTemplate[] = {0,1,2,3,4};
 ;unsigned int _template;
 ;float _volt;
 ;unsigned int _btnCounter, _tempCounter;;
@@ -5249,7 +5250,7 @@ _ds18b20_devices:
 _ds18b20_rom_codes:
 	.BYTE 0x1B
 __arrTemplate:
-	.BYTE 0x8
+	.BYTE 0xA
 __template:
 	.BYTE 0x2
 __volt:

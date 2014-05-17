@@ -28,7 +28,7 @@ unsigned char ds18b20_devices;
 // 9 bytes are used for each device
 // (see the w1_search function description in the help)
 unsigned char ds18b20_rom_codes[MAX_DS18B20][9];
-unsigned int _arrTemplate[] = {0,1,2,3};
+unsigned int _arrTemplate[] = {0,1,2,3,4};
 unsigned int _template;
 float _volt;
 unsigned int _btnCounter, _tempCounter;;
